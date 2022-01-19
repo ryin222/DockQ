@@ -293,13 +293,14 @@ def calc_DockQ(model,native,use_CA_only=False,capri_peptide=False):
     assert len1!=0, "%s chain has zero length!\n" % chain1
     assert len2!=0, "%s chain has zero length!\n" % chain2
 
+    #for a user-controlled ligand and receptor assignment
     class1='ligand'
     class2='receptor'
-    if(len(chain_sample[chain1]) > len(chain_sample[chain2])):
-        receptor_chain=chain1
-        ligand_chain=chain2
-        class1='receptor'
-        class2='ligand'
+#     if(len(chain_sample[chain1]) > len(chain_sample[chain2])):
+#         receptor_chain=chain1
+#         ligand_chain=chain2
+#         class1='receptor'
+#         class2='ligand'
 
 
 
@@ -469,10 +470,10 @@ def main():
     parser.add_argument('-perm1',default=False,action='store_true',help='use all chain1 permutations to find maximum DockQ (number of comparisons is n! = 24, if combined with -perm2 there will be n!*m! combinations')
     parser.add_argument('-perm2',default=False,action='store_true',help='use all chain2 permutations to find maximum DockQ (number of comparisons is n! = 24, if combined with -perm1 there will be n!*m! combinations')
 #    parser.add_argument('-comb',default=False,action='store_true',help='use all cyclicchain permutations to find maximum DockQ (number of comparisons is n!*m! = 24*24 = 576 for two tetramers interacting')
-    parser.add_argument('-model_chain1',metavar='model_chain1', type=str,nargs='+', help='pdb chain order to group together partner 1')
-    parser.add_argument('-model_chain2',metavar='model_chain2', type=str,nargs='+', help='pdb chain order to group together partner 2 (complement to partner 1 if undef)')
-    parser.add_argument('-native_chain1',metavar='native_chain1', type=str,nargs='+', help='pdb chain order to group together from native partner 1')
-    parser.add_argument('-native_chain2',metavar='native_chain2', type=str,nargs='+', help='pdb chain order to group together from native partner 2 (complement to partner 1 if undef)')
+    parser.add_argument('-model_chain1',metavar='model_chain1', type=str,nargs='+', help='ligand chain, pdb chain order to group together partner 1')
+    parser.add_argument('-model_chain2',metavar='model_chain2', type=str,nargs='+', help='receptor chain, pdb chain order to group together partner 2 (complement to partner 1 if undef)')
+    parser.add_argument('-native_chain1',metavar='native_chain1', type=str,nargs='+', help='ligand chain, pdb chain order to group together from native partner 1')
+    parser.add_argument('-native_chain2',metavar='native_chain2', type=str,nargs='+', help='receptor chain, pdb chain order to group together from native partner 2 (complement to partner 1 if undef)')
 
 
     args = parser.parse_args()
@@ -711,13 +712,15 @@ def main():
         print(("Fnonnat %.3f %d non-native of %d model contacts" % (info['fnonnat'],info['nonnat_count'],info['model_total'])))
         print(("iRMS %.3f" % irms))
         print(("LRMS %.3f" % Lrms))
-       # print 'CAPRI ' + capri_class(fnat,irms,Lrms,capri_peptide=capri_peptide)
+        #print CAPRI
+        print 'CAPRI ' + capri_class(fnat,irms,Lrms,capri_peptide=capri_peptide)
         peptide_suffix=''
         if capri_peptide:
             peptide_suffix='_peptide'
-        #print('CAPRI use DockQ instead.')
-        #print(('CAPRI{} {}'.format(peptide_suffix,capri_class(fnat,irms,Lrms,capri_peptide=capri_peptide))))
-        #print('DockQ_CAPRI ' + capri_class_DockQ(DockQ,capri_peptide=capri_peptide))
+         
+#         print('CAPRI use DockQ instead.')
+        print(('CAPRI{} {}'.format(peptide_suffix,capri_class(fnat,irms,Lrms,capri_peptide=capri_peptide))))
+        print('DockQ_CAPRI ' + capri_class_DockQ(DockQ,capri_peptide=capri_peptide))
         peptide_disclaimer=''
         if capri_peptide:
             peptide_disclaimer='DockQ not reoptimized for CAPRI peptide evaluation'
